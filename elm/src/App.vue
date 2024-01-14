@@ -1,16 +1,5 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-import Home from "@/components/Header.vue";
 import Header from "@/components/Header.vue";
-import Footer from "@/components/Footer.vue";
-import Index from "@/views/Index.vue";
-import Loginin from "@/views/Login.vue";
-import Register from "@/views/Register.vue";
-import BusinessInfo from "@/views/BusinessInfo.vue";
-import OrderList from "@/views/OrderList.vue";
-import Order from "@/views/Order.vue";
-import PayMent from "@/views/PayMent.vue";
 </script>
 
 <template>

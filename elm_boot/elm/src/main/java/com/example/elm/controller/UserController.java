@@ -9,7 +9,10 @@ import com.example.elm.domain.*;
 @RestController
 @RequestMapping("/UserController")
 @CrossOrigin(origins = "http://localhost:5173/register")
-public class UserController {
+public class
+
+
+UserController {
 
     @Autowired
     UserMapper userMapper;

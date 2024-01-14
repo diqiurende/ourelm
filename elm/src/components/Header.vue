@@ -1,11 +1,8 @@
-<script>
-export default {
-  data() {
-    return {
-      input: ''
-    }
-  }
-}
+<script setup>
+
+import {ref} from "vue";
+
+const input = ref('')
 
 window.addEventListener('scroll', function() {
   let firstDiv = document.getElementById('location');

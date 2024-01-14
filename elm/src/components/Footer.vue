@@ -1,17 +1,16 @@
-<script >
+<script setup>
 
 import Index from "@/views/Index.vue";
-  export default {
-      name:"Footer",
-    methods:{
-        toIndex(){
-          this.$router.push({name:'Index'});
-        },
-      toOrderlist(){
-          this.$router.push({path:'../../views/orderlist'});
+import {useRouter} from "vue-router";
+const router = useRouter()
+function toIndex(){
+          router.push({name:'Index'});
+        }
+  function    toOrderlist(){
+          router.push({path:'/orderlist'});
       }
-    }
-  }
+
+
 </script>
 
 <template>

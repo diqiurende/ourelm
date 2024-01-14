@@ -4,24 +4,14 @@ import Footer   from "@/components/Footer.vue";
 import { useRouter } from 'vue-router';
 const router = useRouter()
 
-const toBusinessList = () => {
+const toBusinessList = (id) => {
   // 跳转到注册页面
-  router.push('/businesslist')
+  router.push({path:'/businesslist',query:{ordertypeId:id}})
 }
 
 </script>
 
 <template>
- <html>
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport"
-            content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-      <meta http-equiv="X-UA-Compatible" content="ie=edge">
-      <title>我的饿了么 首页</title>
-
-    </head>
- <body>
  <div class="wrapper ">
 
    <Header></Header>
@@ -29,7 +19,7 @@ const toBusinessList = () => {
    <!--分类点餐部分-->
    <div class="foodcontent w-full ">
      <ul class="foodtype">
-       <li @click="toBusinessList">
+       <li @click="toBusinessList(1)">
          <img src="../assets/img/dcfl01.png">
          <p>美食</p>
        </li>
@@ -380,35 +370,10 @@ const toBusinessList = () => {
      </li>
      <li style="margin-top: 60px"></li>
 
-
-
-
-
    </ul>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
    <Footer></Footer>
  </div>
- </body>
- </html>
+
 </template>
 
 <style scoped>

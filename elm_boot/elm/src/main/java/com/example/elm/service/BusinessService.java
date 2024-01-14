@@ -3,6 +3,8 @@ package com.example.elm.service;
 import com.example.elm.domain.Business;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
 * @author faiz
 * @description 针对表【business】的数据库操作Service
@@ -10,4 +12,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface BusinessService extends IService<Business> {
 
+    List<Business> getallbusinessBytypeId(Integer typeId);
+     Business getBusinessById(Integer bus_id);
 }

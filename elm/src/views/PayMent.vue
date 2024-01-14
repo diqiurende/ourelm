@@ -1,19 +1,36 @@
 <script setup>
 import Footer from "@/components/Footer.vue";
+import {onMounted, ref} from "vue";
+import {useRoute, useRouter} from "vue-router";
+import axios from "axios";
+const route = useRoute()
+const router = useRouter()
+const orderId = ref(route.query.orderId)
+const orders = ref({})
+const isShowDetailet = ref(false)
+onMounted(()=>{
+  axios.get("OrdersController/getOrdersById",{params:{orderId:orderId.value}}).then(response=>{
+    orders.value = response.data;
+  }).catch(error=>{
+    console.log(error)
+  })
+})
+
+function  showdetail(){
+  isShowDetailet.value = !isShowDetailet.value
+}
+function confirmorder(){
+  axios.get("OrdersController/setPayflag").then(response=>{
+    if (response.data===1){
+      alert("支付成功！")
+    }
+  }).catch(error=>{
+    console.log(error)
+  })
+}
 </script>
 
 <template>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>我的饿了么 在线支付</title>
-    <link rel="stylesheet" href="../../dist/output.css">
-    <link rel="stylesheet" href="../assets/main.css">
-  </head>
-  <body>
   <div class="w-full h-full">
 
     <!--header部分-->
@@ -25,25 +42,21 @@ import Footer from "@/components/Footer.vue";
     <h3 class="mt-[12vw] box-border pt-[4vw] px-[4vw] pb-0 text-3xl font-light text-[#999999FF]">订单信息：</h3>
     <div class="box-border p-[4vw] text-3xl text-[#666666FF] flex flex-row justify-between items-center">
       <p class="flex flex-row justify-between items-center">
-        万家饺子（软件园E18店）
-        <svg class="flex" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 32 32"><path fill="currentColor" d="m24 12l-8 10l-8-10z"/></svg>
+       {{orders.business.businessName}}
+        <svg class="flex" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 32 32" @click="showdetail"><path fill="currentColor" d="m24 12l-8 10l-8-10z"/></svg>
       </p>
-      <p class="text-red-500">&#165;49</p>
+      <p class="text-red-500">&#165;{{ orders.orderTotal }}</p>
     </div>
 
     <!--订单明细部分-->
-    <ul class="w-full" id="detaletBox">
-      <li class="w-full box-border py-[1vw] px-[4vw] flex justify-between items-center">
-        <p class="text-2xl text-[#666666FF]">纯肉鲜肉（水饺） x 2</p>
-        <p class="text-2xl text-[#666666FF]">&#165;15</p>
-      </li>
-      <li class="w-full box-border py-[1vw] px-[4vw] flex justify-between items-center">
-        <p class="text-2xl text-[#666666FF]">玉米鲜肉（水饺） x 1</p>
-        <p class="text-2xl text-[#666666FF]">&#165;16</p>
+    <ul class="w-full" id="detaletBox" v-show="isShowDetailet">
+      <li class="w-full box-border py-[1vw] px-[4vw] flex justify-between items-center" v-for="(item,key) in orders.list">
+        <p class="text-2xl text-[#666666FF]">{{ item.food.foodName }} x {{item.quantity}}</p>
+        <p class="text-2xl text-[#666666FF]">&#165;{{item.food.foodPrice * item.quantity}}</p>
       </li>
       <li class="w-full box-border py-[1vw] px-[4vw] flex justify-between items-center">
         <p class="text-2xl text-[#666666FF]">配送费</p>
-        <p class="text-2xl text-[#666666FF]">&#165;3</p>
+        <p class="text-2xl text-[#666666FF]">&#165;{{orders.business.deliveryPrice}}</p>
       </li>
     </ul>
 
@@ -58,14 +71,12 @@ import Footer from "@/components/Footer.vue";
       </li>
     </ul>
     <div class="w-full flex-col h-30 flex box-border pt-[4vw] px-[3vw] pb-0 justify-center items-center">
-      <button class="w-full h-20 text-3xl font-bold text-white bg-[#38CA73FF] rounded-[4px] border-none outline-none">确认支付</button>
+      <button class="w-full h-20 text-3xl font-bold text-white bg-[#38CA73FF] rounded-[4px] border-none outline-none" @click="confirmorder">确认支付</button>
     </div>
 
     <!--底部菜单部分-->
       <Footer></Footer>
   </div>
-  </body>
-  </html>
 </template>
 
 <style scoped>

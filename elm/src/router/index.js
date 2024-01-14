@@ -8,6 +8,10 @@ import BusinessList from "@/views/BusinessList.vue";
 import businessInfo from "@/views/BusinessInfo.vue";
 import Order from "@/views/Order.vue";
 import PayMent from "@/views/PayMent.vue";
+import UserAddress from "@/views/UserAddress.vue";
+import AddUserAddress from "@/views/AddUserAddress.vue";
+import EditUserAddress from "@/views/EditUserAddress.vue";
+import OrderList from "@/views/OrderList.vue";
 
 const routes = [
     {
@@ -44,7 +48,23 @@ const routes = [
         path:'/topayment',
         name:'PayMent',
         component: PayMent,
-    },
+    },{
+        path:'/userAddress',
+        name:'UserAddress',
+        component: UserAddress
+    },{
+        path:'/addUserAddress',
+        name: 'AddUserAddress',
+        component: AddUserAddress
+    },{
+        path: '/editUserAddress',
+        name: '/EditUserAddress',
+        component: EditUserAddress
+    },{
+    path: '/orderlist',
+        name: 'Orderlist',
+        component: OrderList
+    }
 ];
 
 const router = createRouter({

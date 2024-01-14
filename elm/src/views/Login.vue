@@ -3,6 +3,7 @@ import Footer from "@/components/Footer.vue";
 import { useRouter } from 'vue-router';
 import {ref} from "vue";
 import axios from "axios";
+import {setSessionStorage} from "@/common.js";
 
 const router = useRouter();
 
@@ -35,12 +36,19 @@ const login = async () => {
     if(userInfo===''){
       alert("未查询到此用户，请先注册");
     }else {
-
       // 检查密码是否匹配
       if (userInfo.password === myPassword.value) {
         // 密码匹配，跳转到 index 页面
         // 使用 router.replace('/index') 或其他你的路由跳转方式
+        let user  = {
+          userId:userInfo.userId,
+          deltag:userInfo.delTag,
+          userName: userInfo.userName,
+          userSex: userInfo.userSex,
+          delTag: userInfo.delTag
+        }
         alert('Password matched! jumping to index...');
+        setSessionStorage('user',user)
         router.push('/');
       } else {
         // 密码不匹配，处理逻辑（例如弹出错误提示）

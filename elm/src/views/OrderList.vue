@@ -1,19 +1,27 @@
 <script setup>
+import {onMounted, ref} from "vue";
+import {getSessionStorage} from "@/common.js";
+import axios from "axios";
 
+const orderArr = ref([])
+const user = ref({})
+
+onMounted(()=>{
+  user.value = getSessionStorage('user')
+  axios.get("/OrdersController/listordersByuser",{params:{userId:user.value.userId}}).then(response=>{
+    let orders = response.data
+    for(let order of orders){
+      order.isShowDetaillet = false;
+    }
+    orderArr.value = orders;
+    console.log(orderArr.value)
+  }).catch(error=>{
+    console.log(error)
+  })
+})
 </script>
 
 <template>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>我的饿了么 我的订单</title>
-    <link rel="stylesheet" href="../../dist/output.css">
-    <link rel="stylesheet" href="../assets/main.css">
-  </head>
-  <body>
   <div class="w-full h-full">
 
     <!--header部分-->
@@ -25,139 +33,58 @@
     <h3 class=" mt-24 box-border p-[4vw] text-3xl font-light text-[#999999FF]">未支付订单信息：</h3>
     <ul class="w-full">
 
-      <li class="w-full  text-3xl">
+      <li v-for="(item,key) in orderArr" v-if="item.orderState===0" class="w-full  text-3xl">
         <div class="box-border py-[2vw] px-[4vw]  text-[#666666FF] flex justify-between items-center">
-          <p class="flex  justify-between items-center">万家饺子（软件园E18店）
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="currentColor" d="m24 12l-8 10l-8-10z"/></svg></p>
+          <p class="flex  justify-between items-center">{{ item.business.businessName }}
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" @click="showDetail"><path fill="currentColor" d="m24 12l-8 10l-8-10z"/></svg></p>
           <div class="flex">
-            <p class="">&#165;49</p>
+            <p class="">&#165;{{item.orderTotal}}</p>
             <div class="bg-[#FF9900FF] text-white rounded-[3px] ml-4 select-none cursor-pointer">去支付</div>
           </div>
         </div>
-        <ul class="w-full">
-          <li class=" w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl  flex justify-between items-center">
-            <p class="">纯肉鲜肉（水饺） x 2</p>
-            <p class="">&#165;15</p>
-          </li>
-          <li class=" w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl  flex justify-between items-center">
-            <p class="">玉米鲜肉（水饺） x 1</p>
-            <p class="">&#165;16</p>
+        <ul class="w-full" v-show="item.isShowDetaillet">
+          <li class=" w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl  flex justify-between items-center" v-for="(detail,key) in item.list">
+            <p class="">{{detail.food.foodName}} x {{detail.quantity}}</p>
+            <p class="">&#165;{{detail.food.foodPrice * detail.quantity}} </p>
           </li>
           <li class=" w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl  flex justify-between items-center">
             <p class="">配送费</p>
-            <p class="">&#165;3</p>
+            <p class="">&#165;{{item.business.deliveryPrice}}</p>
           </li>
 
-        </ul>
-      </li>
-
-      <li class="w-full text-3xl">
-        <div class="box-border py-[2vw] px-[4vw]  text-[#666666FF] flex justify-between items-center">
-          <p class="flex flex-row justify-between items-center">
-            小锅饭豆腐馆（全运店）
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="currentColor" d="m24 12l-8 10l-8-10z"/></svg>
-          </p>
-          <div class="flex">
-            <p class="">&#165;55</p>
-            <div class="bg-[#FF9900FF] text-white rounded-[3px] ml-4 select-none cursor-pointer">去支付</div>
-          </div>
-        </div>
-        <ul class="w-full ">
-          <li class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
-            <p class="">纯肉鲜肉（水饺） x 2</p>
-            <p class="">&#165;15</p>
-          </li>
-          <li class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
-            <p class="">玉米鲜肉（水饺） x 1</p>
-            <p class="">&#165;16</p>
-          </li>
-          <li class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
-            <p class="">配送费</p>
-            <p class="">&#165;3</p>
-          </li>
         </ul>
       </li>
     </ul>
 
     <h3 class=" mt-24 box-border p-[4vw] text-3xl font-light text-[#999999FF]">已支付订单信息：</h3>
     <ul class="w-full">
-      <li class="w-full text-3xl">
+      <li class="w-full text-3xl" v-for="item in orderArr" v-if="item.orderState===1">
         <div class="box-border py-[2vw] px-[4vw]  text-[#666666FF] flex justify-between items-center">
           <p class="flex flex-row justify-between items-center">
-            万家饺子（软件园E18店）
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="currentColor" d="m24 12l-8 10l-8-10z"/></svg>
+            {{item.business.businessName}}
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" @click="showdetail"><path fill="currentColor" d="m24 12l-8 10l-8-10z"/></svg>
           </p>
           <div class="flex">
-            <p class="">&#165;49</p>
+            <p class="">&#165;{{item.orderTotal}}</p>
             <div class="bg-[#FF9900FF] text-white rounded-[3px] ml-4 select-none cursor-pointer">去支付</div>
           </div>
         </div>
-        <ul class="w-full ">
-          <li class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
-            <p class="">纯肉鲜肉（水饺） x 2</p>
-            <p class="">&#165;15</p>
-          </li>
-          <li class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
-            <p class="">玉米鲜肉（水饺） x 1</p>
-            <p class="">&#165;16</p>
+        <ul class="w-full" v-show="item.isShowDetaillet">
+          <li class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center" v-for="(detail,key) in item.list">
+            <p class="">{{detail.food.foodName}} x {{detail.quantity}}</p>
+            <p class="">&#165;{{detail.food.foodPrice * detail.quantity}}</p>
           </li>
           <li class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
             <p class="">配送费</p>
-            <p class="">&#165;3</p>
-          </li>
-        </ul>
-      </li>
-
-      <li class="w-full text-3xl">
-        <div class="box-border py-[2vw] px-[4vw]  text-[#666666FF] flex justify-between items-center">
-          <p class="flex flex-row justify-between items-center">
-            小锅饭豆腐馆（全运店）
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32"><path fill="currentColor" d="m24 12l-8 10l-8-10z"/></svg>
-          </p>
-          <div class="flex">
-            <p class="">&#165;55</p>
-            <div class="bg-[#FF9900FF] text-white rounded-[3px] ml-4 select-none cursor-pointer">去支付</div>
-          </div>
-        </div>
-        <ul class="w-full ">
-          <li class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
-            <p class="">纯肉鲜肉（水饺） x 2</p>
-            <p class="">&#165;15</p>
-          </li>
-          <li class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
-            <p class="">玉米鲜肉（水饺） x 1</p>
-            <p class="">&#165;16</p>
-          </li>
-          <li class="w-full box-border py-[1vw] px-[4vw] text-[#666666FF] text-xl flex justify-between items-center">
-            <p class="">配送费</p>
-            <p class="">&#165;3</p>
+            <p class="">&#165;{{item.business.deliveryPrice}}</p>
           </li>
         </ul>
       </li>
     </ul>
 
     <!--底部菜单部分-->
-    <ul class="w-full h-28 border-solid border-t-[1px] text-[#999999FF] flex justify-around items-center fixed left-0 bottom-0 bg-[#FFFFFFFF] text-2xl">
-      <li class="flex flex-col justify-around items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9M6 10l6-6l6 6M6 10l-2 2m14-2l2 2m-10 1h4v4h-4v-4z"/></svg>
-        <p >首页</p>
-      </li>
-      <li class="flex flex-col justify-around items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 50 50"><path fill="currentColor" d="M25 49C11.766 49 1 38.233 1 25C1 11.766 11.766 1 25 1c13.233 0 24 10.766 24 24c0 13.233-10.767 24-24 24zm0-44C13.972 5 5 13.972 5 25s8.972 20 20 20s20-8.972 20-20S36.028 5 25 5zm.045 3.25S18 20.321 18 24v2c0 3.678 7.066 16 7.066 16S32 29.934 32 26.256v-2.262c0-3.679-6.955-15.744-6.955-15.744zM25 29a4 4 0 1 1 0-8a4 4 0 0 1 0 8z"/></svg>
-        <p class="text-[2.8vw]">发现</p>
-      </li>
-      <li class="flex flex-col justify-around items-center" onclick="location.href='orderList.html'">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><g id="feDocument0" fill="none" fill-rule="evenodd" stroke="none" stroke-width="1"><g id="feDocument1" fill="currentColor" fill-rule="nonzero"><path id="feDocument2" d="M15 4H6v16h12V7h-3V4ZM6 2h10l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm2 9h8v2H8v-2Zm0 4h8v2H8v-2Z"/></g></g></svg>
-        <p class="text-[2.8vw]">订单</p>
-      </li>
-      <li class="flex flex-col justify-around items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 19v-1.25c0-2.071-1.919-3.75-4.286-3.75h-3.428C7.919 14 6 15.679 6 17.75V19m9-11a3 3 0 1 1-6 0a3 3 0 0 1 6 0z"/></svg>
-        <p class="text-[2.8vw]">我的</p>
-      </li>
-    </ul>
+    <Footer></Footer>
   </div>
-  </body>
-  </html>
 </template>
 
 <style scoped>

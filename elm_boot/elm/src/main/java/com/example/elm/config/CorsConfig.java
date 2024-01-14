@@ -1,4 +1,4 @@
-package com.example.elm;
+package com.example.elm.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
